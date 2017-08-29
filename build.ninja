@@ -1,0 +1,38 @@
+root = .
+builddir = build
+cxx = gcc
+ar = ar
+cflags = -g -Wall -Wextra
+ldflags = -L$builddir/lib
+
+rule cxx
+  command = $cxx -MMD -MT $out -MF $out.d $cflags -c $in -o $out -Iinclude
+  description = CXX $out
+  depfile = $out.d
+  deps = gcc
+
+rule ar
+  command = rm -f $out && $ar crs $out $in
+  description = AR $out
+
+rule link
+  command = $cxx $ldflags -o $out $in $libs
+  description = LINK $out
+
+build $builddir/array.o: cxx $root/src/array.c
+build $builddir/hash_map.o: cxx $root/src/hash_map.c
+build $builddir/string_store.o: cxx $root/src/string_store.c
+build $builddir/type.o: cxx $root/src/type.c
+build $builddir/lib/libcollections.a: ar $builddir/array.o $builddir/hash_map.o $builddir/string_store.o $builddir/type.o
+
+build $builddir/array_test.o: cxx $root/test/array_test.c
+build $builddir/test/array_test: link $builddir/array_test.o | $builddir/lib/libcollections.a
+  libs = -lcollections -lconnie
+
+build $builddir/hash_map_test.o: cxx $root/test/hash_map_test.c
+build $builddir/test/hash_map_test: link $builddir/hash_map_test.o | $builddir/lib/libcollections.a
+  libs = -lcollections -lconnie
+
+build $builddir/string_store_test.o: cxx $root/test/string_store_test.c
+build $builddir/test/string_store_test: link $builddir/string_store_test.o | $builddir/lib/libcollections.a
+  libs = -lcollections -lconnie
