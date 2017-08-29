@@ -44,7 +44,6 @@ hmap_HashMap *hmap_new(c_Type key_type, c_Type value_type)
 	hmap_Bucket *buckets = NULL;
 	c_Hasher hasher;
 	c_Comparator comparator;
-	int ret;
 	
 	hmap = (hmap_HashMap *) malloc(sizeof (hmap_HashMap));
 	buckets = (hmap_Bucket *) calloc(BUCKETS_LEN, sizeof (hmap_Bucket));
@@ -145,7 +144,6 @@ void *hmap_put(hmap_HashMap *hmap, void *key, void *value)
 void *hmap_lookup(hmap_HashMap *hmap, void *key)
 {
 	hmap_Entry *entry;
-	int ret;
 	
 	if (hmap == NULL || key == NULL) {
 		return NULL;

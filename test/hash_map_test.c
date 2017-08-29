@@ -28,7 +28,6 @@ void test_1(connie_Connie *c)
 	unsigned int key;
 	const char *value_in = "foo";
 	const char **value_out;
-	int ret;
 
 	hmap = hmap_new(c_TYPE_UINT, c_TYPE_STRING);
 	A_NOT_NULL(c, hmap);

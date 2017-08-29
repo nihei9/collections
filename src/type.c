@@ -114,7 +114,7 @@ unsigned int c_hash_char(void *key)
 {
 	char *k = (char *) key;
 
-	if (k < 0) {
+	if (*k < 0) {
 		return (unsigned int) *k * -1;
 	}
 	
@@ -132,7 +132,7 @@ unsigned int c_hash_int(void *key)
 {
 	int *k = (int *) key;
 
-	if (k < 0) {
+	if (*k < 0) {
 		return (unsigned int) *k * -1;
 	}
 	
