@@ -1,5 +1,7 @@
 root = .
 builddir = build
+libdir = /usr/local/lib
+includedir = /usr/local/include
 cxx = gcc
 ar = ar
 cflags = -g -Wall -Wextra
@@ -19,11 +21,19 @@ rule link
   command = $cxx $ldflags -o $out $in $libs
   description = LINK $out
 
+rule copy
+  command = cp -rf $in $out
+
+# build
+
 build $builddir/array.o: cxx $root/src/array.c
 build $builddir/hash_map.o: cxx $root/src/hash_map.c
 build $builddir/string_store.o: cxx $root/src/string_store.c
 build $builddir/type.o: cxx $root/src/type.c
 build $builddir/lib/libcollections.a: ar $builddir/array.o $builddir/hash_map.o $builddir/string_store.o $builddir/type.o
+build collections: phony $builddir/lib/libcollections.a
+
+# test
 
 build $builddir/array_test.o: cxx $root/test/array_test.c
 build $builddir/test/array_test: link $builddir/array_test.o | $builddir/lib/libcollections.a
@@ -36,3 +46,14 @@ build $builddir/test/hash_map_test: link $builddir/hash_map_test.o | $builddir/l
 build $builddir/string_store_test.o: cxx $root/test/string_store_test.c
 build $builddir/test/string_store_test: link $builddir/string_store_test.o | $builddir/lib/libcollections.a
   libs = -lcollections -lconnie
+
+build test: phony $builddir/test/array_test $builddir/test/hash_map_test $builddir/test/string_store_test
+
+# install
+
+build $libdir/libcollections.a: copy $builddir/lib/libcollections.a
+build $includedir/collections.h: copy $root/include/collections.h
+build $includedir/collections: copy $root/include/collections
+#build $includedir/collections/hash_map.h: copy $root/include/collections/hash_map.h
+#build $includedir/collections/string_store.h: copy $root/include/collections/string_store.h
+build install: phony $libdir/libcollections.a $includedir/collections.h $includedir/collections
