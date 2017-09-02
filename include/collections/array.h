@@ -5,6 +5,7 @@
 #include <stdio.h>
 
 typedef struct arr_Array arr_Array;
+
 typedef int (*arr_Initializer)(unsigned int index, void *elem, void *user_data);
 typedef int (*arr_Finalizer)(unsigned int index, void *elem, void *user_data);
 typedef int (*arr_Comparator)(const void *elem_1, const void *elem_2, void *user_data, int *result);
@@ -26,5 +27,13 @@ void *arr_set(arr_Array *arr, unsigned int index, void *elem);
 arr_Array *arr_cleanup(arr_Array *arr);
 c_Bool arr_contain(arr_Array *arr, void *elem);
 int arr_map(arr_Array *arr, arr_Callback f);
+
+typedef struct arr_Filter {
+    arr_Callback func;
+    unsigned int index;
+} arr_Filter;
+
+arr_Filter *arr_set_filter(arr_Filter *filter, arr_Callback func);
+void *arr_next(arr_Filter *filter, const arr_Array *arr);
 
 #endif

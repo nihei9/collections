@@ -357,3 +357,43 @@ int arr_map(arr_Array *arr, arr_Callback f)
 	
 	return 0;
 }
+
+
+arr_Filter *arr_set_filter(arr_Filter *filter, arr_Callback func)
+{
+	if (filter == NULL || func == NULL) {
+		return NULL;
+	}
+
+	filter->func = func;
+	filter->index = 0;
+
+	return filter;
+}
+
+
+void *arr_next(arr_Filter *filter, const arr_Array *arr)
+{
+	void *v;
+	arr_Callback f;
+	unsigned int i;
+
+	if (filter == NULL || arr == NULL) {
+		return NULL;
+	}
+
+	f = filter->func;
+	for (i = filter->index; i < arr->len; i++) {
+		void *v = arr_get(arr, i);
+		if (v == NULL) {
+			return NULL;
+		}
+		if ((*f)(i, v, arr->user_data) == 1) {
+			filter->index = i + 1;
+
+			return v;
+		}
+	}
+
+	return NULL;
+}
