@@ -8,6 +8,7 @@ void test_1(connie_Connie *c);
 void test_2(connie_Connie *c);
 void test_3(connie_Connie *c);
 void test_4(connie_Connie *c);
+void test_filter(connie_Connie *c);
 
 
 int main(void)
@@ -20,6 +21,7 @@ int main(void)
 	TEST(c, test_2);
 	TEST(c, test_3);
 	TEST(c, test_4);
+	TEST(c, test_filter);
 
 	connie_print(c);
 
@@ -175,6 +177,80 @@ void test_4(connie_Connie *c)
 
 	v = arr_set(arr, 0, (void *) &values[0]);
 	A_NULL(c, v);
+
+	arr_delete(arr);
+}
+
+
+typedef struct String {
+	int id;
+	const char *str;
+} String;
+
+static int initialize_string(unsigned int index, void *elem, void *user_data)
+{
+	String *str = (String *) elem;
+
+	str->id = 0;
+	str->str = NULL;
+
+	return 0;
+}
+
+int filter_foo(unsigned int index, const void *elem, void *user_data)
+{
+	const String *str = (const String *) elem;
+
+	if (str->str == NULL) {
+		return 0;
+	}
+
+	if (strcmp("foo", str->str) == 0) {
+		return 1;
+	}
+
+	return 0;
+}
+
+void test_filter(connie_Connie *c)
+{
+	arr_Array *arr;
+	const String strs[] = {
+		{0, "foo"},
+		{1, "bar"},
+		{2, "baz"},
+		{3, "foo"},
+	};
+	arr_Filter filter;
+	arr_Filter *f;
+	const String *str;
+
+	arr = arr_new(sizeof (String));
+	A_NOT_NULL(c, arr);
+
+	arr_set_initializer(arr, initialize_string);
+	arr_autoext_on(arr, 64);
+
+	arr_set(arr, 0, &strs[0]);
+	arr_set(arr, 1, &strs[1]);
+	arr_set(arr, 2, &strs[2]);
+	arr_set(arr, 3, &strs[3]);
+
+	f = arr_set_filter(&filter, filter_foo);
+	A_NOT_NULL(c, f);
+
+	str = (const String *) arr_next(f, arr);
+	A_NOT_NULL(c, str);
+	A_EQL_INT(c, 0, str->id);
+	A_EQL_STRING(c, "foo", str->str);
+
+	str = (const String *) arr_next(f, arr);
+	A_NOT_NULL(c, str);
+	A_EQL_INT(c, 3, str->id);
+	A_EQL_STRING(c, "foo", str->str);
+
+	str = (const String *) arr_next(f, arr);
+	A_NULL(c, str);
 
 	arr_delete(arr);
 }
