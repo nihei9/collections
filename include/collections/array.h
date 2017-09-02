@@ -1,6 +1,7 @@
 #ifndef arr_COLLECTIONS_ARRAY_H
 #define arr_COLLECTIONS_ARRAY_H
 
+#include "type.h"
 #include "bool.h"
 #include <stdio.h>
 
@@ -28,12 +29,15 @@ arr_Array *arr_cleanup(arr_Array *arr);
 c_Bool arr_contain(arr_Array *arr, void *elem);
 int arr_map(arr_Array *arr, arr_Callback f);
 
+typedef int (*arr_Matcher)(unsigned int index, const void *elem, c_TypeUnion cond, void *user_data);
+
 typedef struct arr_Filter {
-    arr_Callback func;
+    arr_Matcher matcher;
+    c_TypeUnion cond;
     unsigned int index;
 } arr_Filter;
 
-arr_Filter *arr_set_filter(arr_Filter *filter, arr_Callback func);
+arr_Filter *arr_set_filter(arr_Filter *filter, arr_Matcher matcher, c_TypeUnion cond);
 void *arr_next(arr_Filter *filter, const arr_Array *arr);
 
 #endif

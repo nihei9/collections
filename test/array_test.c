@@ -197,7 +197,7 @@ static int initialize_string(unsigned int index, void *elem, void *user_data)
 	return 0;
 }
 
-int filter_foo(unsigned int index, const void *elem, void *user_data)
+int match_string(unsigned int index, const void *elem, c_TypeUnion cond, void *user_data)
 {
 	const String *str = (const String *) elem;
 
@@ -205,7 +205,7 @@ int filter_foo(unsigned int index, const void *elem, void *user_data)
 		return 0;
 	}
 
-	if (strcmp("foo", str->str) == 0) {
+	if (strcmp(cond.t_string, str->str) == 0) {
 		return 1;
 	}
 
@@ -216,14 +216,12 @@ void test_filter(connie_Connie *c)
 {
 	arr_Array *arr;
 	const String strs[] = {
-		{0, "foo"},
-		{1, "bar"},
-		{2, "baz"},
-		{3, "foo"},
+		{1, "foo"},
+		{2, "bar"},
+		{3, "baz"},
+		{4, "foo"},
+		{5, "baz"},
 	};
-	arr_Filter filter;
-	arr_Filter *f;
-	const String *str;
 
 	arr = arr_new(sizeof (String));
 	A_NOT_NULL(c, arr);
@@ -231,26 +229,78 @@ void test_filter(connie_Connie *c)
 	arr_set_initializer(arr, initialize_string);
 	arr_autoext_on(arr, 64);
 
-	arr_set(arr, 0, &strs[0]);
-	arr_set(arr, 1, &strs[1]);
-	arr_set(arr, 2, &strs[2]);
-	arr_set(arr, 3, &strs[3]);
+	{
+		unsigned int strs_len = sizeof strs / sizeof (String);
+		unsigned int i;
 
-	f = arr_set_filter(&filter, filter_foo);
-	A_NOT_NULL(c, f);
+		for (i = 0; i < strs_len; i++) {
+			arr_set(arr, i, &strs[i]);
+		}
+	}
 
-	str = (const String *) arr_next(f, arr);
-	A_NOT_NULL(c, str);
-	A_EQL_INT(c, 0, str->id);
-	A_EQL_STRING(c, "foo", str->str);
+	{
+		arr_Filter filter;
+		arr_Filter *f;
+		const String *str;
+		const char *cond = "foo";
 
-	str = (const String *) arr_next(f, arr);
-	A_NOT_NULL(c, str);
-	A_EQL_INT(c, 3, str->id);
-	A_EQL_STRING(c, "foo", str->str);
+		f = arr_set_filter(&filter, match_string, (c_TypeUnion) cond);
+		A_NOT_NULL(c, f);
 
-	str = (const String *) arr_next(f, arr);
-	A_NULL(c, str);
+		str = (const String *) arr_next(f, arr);
+		A_NOT_NULL(c, str);
+		A_EQL_INT(c, 1, str->id);
+		A_EQL_STRING(c, cond, str->str);
+
+		str = (const String *) arr_next(f, arr);
+		A_NOT_NULL(c, str);
+		A_EQL_INT(c, 4, str->id);
+		A_EQL_STRING(c, cond, str->str);
+
+		str = (const String *) arr_next(f, arr);
+		A_NULL(c, str);
+	}
+
+	{
+		arr_Filter filter;
+		arr_Filter *f;
+		const String *str;
+		const char *cond = "bar";
+
+		f = arr_set_filter(&filter, match_string, (c_TypeUnion) cond);
+		A_NOT_NULL(c, f);
+
+		str = (const String *) arr_next(f, arr);
+		A_NOT_NULL(c, str);
+		A_EQL_INT(c, 2, str->id);
+		A_EQL_STRING(c, cond, str->str);
+
+		str = (const String *) arr_next(f, arr);
+		A_NULL(c, str);
+	}
+
+	{
+		arr_Filter filter;
+		arr_Filter *f;
+		const String *str;
+		const char *cond = "baz";
+
+		f = arr_set_filter(&filter, match_string, (c_TypeUnion) cond);
+		A_NOT_NULL(c, f);
+
+		str = (const String *) arr_next(f, arr);
+		A_NOT_NULL(c, str);
+		A_EQL_INT(c, 3, str->id);
+		A_EQL_STRING(c, cond, str->str);
+
+		str = (const String *) arr_next(f, arr);
+		A_NOT_NULL(c, str);
+		A_EQL_INT(c, 5, str->id);
+		A_EQL_STRING(c, cond, str->str);
+
+		str = (const String *) arr_next(f, arr);
+		A_NULL(c, str);
+	}
 
 	arr_delete(arr);
 }

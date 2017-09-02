@@ -359,14 +359,15 @@ int arr_map(arr_Array *arr, arr_Callback f)
 }
 
 
-arr_Filter *arr_set_filter(arr_Filter *filter, arr_Callback func)
+arr_Filter *arr_set_filter(arr_Filter *filter, arr_Matcher matcher, c_TypeUnion cond)
 {
-	if (filter == NULL || func == NULL) {
+	if (filter == NULL || matcher == NULL) {
 		return NULL;
 	}
 
-	filter->func = func;
+	filter->matcher = matcher;
 	filter->index = 0;
+	filter->cond = cond;
 
 	return filter;
 }
@@ -375,20 +376,20 @@ arr_Filter *arr_set_filter(arr_Filter *filter, arr_Callback func)
 void *arr_next(arr_Filter *filter, const arr_Array *arr)
 {
 	void *v;
-	arr_Callback f;
+	arr_Matcher m;
 	unsigned int i;
 
 	if (filter == NULL || arr == NULL) {
 		return NULL;
 	}
 
-	f = filter->func;
+	m = filter->matcher;
 	for (i = filter->index; i < arr->len; i++) {
 		void *v = arr_get(arr, i);
 		if (v == NULL) {
 			return NULL;
 		}
-		if ((*f)(i, v, arr->user_data) == 1) {
+		if ((*m)(i, v, filter->cond, arr->user_data) == 1) {
 			filter->index = i + 1;
 
 			return v;
