@@ -24,7 +24,7 @@ arr_Comparator arr_set_comparator(arr_Array *arr, arr_Comparator comparator);
 void *arr_set_user_data(arr_Array *arr, void *user_data);
 unsigned int arr_extend(arr_Array *arr, unsigned int ext_len);
 void *arr_get(arr_Array *arr, unsigned int index);
-void *arr_set(arr_Array *arr, unsigned int index, void *elem);
+void *arr_set(arr_Array *arr, unsigned int index, const void *elem);
 arr_Array *arr_cleanup(arr_Array *arr);
 c_Bool arr_contain(arr_Array *arr, void *elem);
 int arr_map(arr_Array *arr, arr_Callback f);

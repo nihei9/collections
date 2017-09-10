@@ -266,7 +266,7 @@ void *arr_get(arr_Array *arr, unsigned int index)
 }
 
 
-void *arr_set(arr_Array *arr, unsigned int index, void *elem)
+void *arr_set(arr_Array *arr, unsigned int index, const void *elem)
 {
 	void *e;
 	
