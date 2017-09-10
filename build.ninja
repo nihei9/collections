@@ -53,5 +53,11 @@ build test: phony $builddir/test/array_test $builddir/test/hash_map_test $buildd
 
 build $libdir/libcollections.a: copy $builddir/lib/libcollections.a
 build $includedir/collections.h: copy $root/include/collections.h
-build $includedir/collections: copy $root/include/collections
-build install: phony $libdir/libcollections.a $includedir/collections.h $includedir/collections
+build $includedir/collections/array.h: copy $root/include/collections/array.h
+build $includedir/collections/hash_map.h: copy $root/include/collections/hash_map.h
+build $includedir/collections/string_store.h: copy $root/include/collections/string_store.h
+build $includedir/collections/type.h: copy $root/include/collections/type.h
+build $includedir/collections/bool.h: copy $root/include/collections/bool.h
+build install: phony $libdir/libcollections.a $includedir/collections.h $
+  $includedir/collections/array.h $includedir/collections/hash_map.h $includedir/collections/string_store.h $
+  $includedir/collections/type.h $includedir/collections/bool.h
