@@ -375,7 +375,6 @@ arr_Filter *arr_set_filter(arr_Filter *filter, arr_Matcher matcher, c_TypeUnion 
 
 void *arr_next(arr_Filter *filter, const arr_Array *arr)
 {
-	void *v;
 	arr_Matcher m;
 	unsigned int i;
 
@@ -385,7 +384,7 @@ void *arr_next(arr_Filter *filter, const arr_Array *arr)
 
 	m = filter->matcher;
 	for (i = filter->index; i < arr->len; i++) {
-		void *v = arr_get(arr, i);
+		void *v = arr_get((arr_Array *) arr, i);
 		if (v == NULL) {
 			return NULL;
 		}
