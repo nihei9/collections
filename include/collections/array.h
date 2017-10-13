@@ -27,6 +27,7 @@ void *arr_get(arr_Array *arr, unsigned int index);
 void *arr_set(arr_Array *arr, unsigned int index, const void *elem);
 arr_Array *arr_cleanup(arr_Array *arr);
 c_Bool arr_contain(arr_Array *arr, void *elem);
+c_Bool arr_contain_in_range(arr_Array *arr, void *elem, size_t from, size_t to);
 int arr_map(arr_Array *arr, arr_Callback f);
 
 typedef int (*arr_Matcher)(unsigned int index, const void *elem, c_TypeUnion cond, void *user_data);
