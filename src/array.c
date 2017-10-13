@@ -312,13 +312,23 @@ c_Bool arr_contain(arr_Array *arr, void *elem)
 		return c_BOOL_FALSE;
 	}
 	
+	return arr_contain_in_range(arr, elem, 0, arr->len - 1);
+}
+
+
+c_Bool arr_contain_in_range(arr_Array *arr, void *elem, size_t from, size_t to)
+{
+	if (arr == NULL || elem == NULL || from >= arr->len || to >= arr->len || from > to) {
+		return c_BOOL_FALSE;
+	}
+	
 	if (arr->callbacks.comparator != NULL){
 		char *body = arr->body;
 		arr_Comparator comparator = arr->callbacks.comparator;
-		unsigned long i;
+		size_t i;
 		int result;
 		
-		for (i = 0; i < arr->len; i++) {
+		for (i = from; i < to; i++) {
 			(*comparator)(elem, &body[i * arr->elem_size], arr->user_data, &result);
 			if (result == 0) {
 				return c_BOOL_TRUE;
@@ -326,10 +336,10 @@ c_Bool arr_contain(arr_Array *arr, void *elem)
 		}
 	} else {
 		char *body = arr->body;
-		unsigned long i;
+		size_t i;
 		int ret;
 		
-		for (i = 0; i < arr->len; i++) {
+		for (i = from; i < to; i++) {
 			ret = memcmp(elem, &body[i * arr->elem_size], arr->elem_size);
 			if (ret == 0) {
 				return c_BOOL_TRUE;
