@@ -162,7 +162,7 @@ unsigned int c_hash_ulong(void *key)
 
 unsigned int c_hash_string(void *key)
 {
-	const char *str = (const char *) key;
+	const char *str = *((const char **) key);
 	
 	return (unsigned int) str[0];
 }
