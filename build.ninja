@@ -28,9 +28,9 @@ rule copy
 
 build $builddir/array.o: cxx $root/src/array.c
 build $builddir/hash_map.o: cxx $root/src/hash_map.c
-build $builddir/string_store.o: cxx $root/src/string_store.c
+build $builddir/symbol_store.o: cxx $root/src/symbol_store.c
 build $builddir/type.o: cxx $root/src/type.c
-build $builddir/lib/libcollections.a: ar $builddir/array.o $builddir/hash_map.o $builddir/string_store.o $builddir/type.o
+build $builddir/lib/libcollections.a: ar $builddir/array.o $builddir/hash_map.o $builddir/symbol_store.o $builddir/type.o
 build collections: phony $builddir/lib/libcollections.a
 
 # test
@@ -43,11 +43,11 @@ build $builddir/hash_map_test.o: cxx $root/test/hash_map_test.c
 build $builddir/test/hash_map_test: link $builddir/hash_map_test.o | $builddir/lib/libcollections.a
   libs = -lcollections -lconnie
 
-build $builddir/string_store_test.o: cxx $root/test/string_store_test.c
-build $builddir/test/string_store_test: link $builddir/string_store_test.o | $builddir/lib/libcollections.a
+build $builddir/symbol_store_test.o: cxx $root/test/symbol_store_test.c
+build $builddir/test/symbol_store_test: link $builddir/symbol_store_test.o | $builddir/lib/libcollections.a
   libs = -lcollections -lconnie
 
-build test: phony $builddir/test/array_test $builddir/test/hash_map_test $builddir/test/string_store_test
+build test: phony $builddir/test/array_test $builddir/test/hash_map_test $builddir/test/symbol_store_test
 
 # install
 
@@ -55,9 +55,9 @@ build $libdir/libcollections.a: copy $builddir/lib/libcollections.a
 build $includedir/collections.h: copy $root/include/collections.h
 build $includedir/collections/array.h: copy $root/include/collections/array.h
 build $includedir/collections/hash_map.h: copy $root/include/collections/hash_map.h
-build $includedir/collections/string_store.h: copy $root/include/collections/string_store.h
+build $includedir/collections/symbol_store.h: copy $root/include/collections/symbol_store.h
 build $includedir/collections/type.h: copy $root/include/collections/type.h
 build $includedir/collections/bool.h: copy $root/include/collections/bool.h
 build install: phony $libdir/libcollections.a $includedir/collections.h $
-  $includedir/collections/array.h $includedir/collections/hash_map.h $includedir/collections/string_store.h $
+  $includedir/collections/array.h $includedir/collections/hash_map.h $includedir/collections/symbol_store.h $
   $includedir/collections/type.h $includedir/collections/bool.h
