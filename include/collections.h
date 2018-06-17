@@ -5,6 +5,6 @@
 #include "collections/bool.h"
 #include "collections/array.h"
 #include "collections/hash_map.h"
-#include "collections/string_store.h"
+#include "collections/symbol_store.h"
 
 #endif
