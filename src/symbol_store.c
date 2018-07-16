@@ -79,7 +79,6 @@ const syms_SymbolID *syms_put(syms_SymbolStore *syms, const char *symbol)
 {
 	const char *dup_sym;
 	const syms_SymbolID *id;
-    syms_SymbolID sym_id;
 
 	if (syms == NULL || symbol == NULL) {
 		return NULL;
@@ -97,15 +96,14 @@ const syms_SymbolID *syms_put(syms_SymbolStore *syms, const char *symbol)
 		return NULL;
 	}
 
-	if (hmap_put(syms->str2id_map, &dup_sym, &sym_id) == NULL) {
+	if (hmap_put(syms->str2id_map, &dup_sym, &syms->id) == NULL) {
 		return NULL;
 	}
-	if (hmap_put(syms->id2str_map, &sym_id, &dup_sym) == NULL) {
+	if (hmap_put(syms->id2str_map, &syms->id, &dup_sym) == NULL) {
 		return NULL;
 	}
 	
-	syms->ret_id = sym_id;
-    syms->id++;
+	syms->ret_id = syms->id++;
 
 	return &syms->ret_id;
 }
